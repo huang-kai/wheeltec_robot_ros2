@@ -40,5 +40,5 @@ build/
 build/
 devel/
 install/
-log/
-Log/
+/log
+/Log

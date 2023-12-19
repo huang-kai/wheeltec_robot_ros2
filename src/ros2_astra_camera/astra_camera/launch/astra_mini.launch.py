@@ -30,5 +30,6 @@ def generate_launch_description():
                            plugin='astra_camera::PointCloudXyzrgbNode',
                            namespace='camera',
                            name='point_cloud_xyzrgb')
-        ],)
+        ],
+        output='screen')
     return LaunchDescription([container])
