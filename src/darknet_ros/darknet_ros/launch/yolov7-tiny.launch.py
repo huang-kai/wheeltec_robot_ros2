@@ -3,6 +3,7 @@ from launch import LaunchDescription
 from launch.actions import IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
+import os
 
 def generate_launch_description():
   darknet_ros_share_dir = get_package_share_directory('darknet_ros')
