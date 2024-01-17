@@ -10,17 +10,22 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, PythonExpression
 from launch_ros.actions import PushRosNamespace
 import launch_ros.actions
+from launch.conditions import IfCondition
 from launch.conditions import UnlessCondition
 
 def generate_launch_description():
     # Get the launch directory
     bringup_dir = get_package_share_directory('turn_on_wheeltec_robot')
     launch_dir = os.path.join(bringup_dir, 'launch')
+        
     ekf_config = Path(get_package_share_directory('turn_on_wheeltec_robot'), 'config', 'ekf.yaml')
+    ekf_carto_config = Path(get_package_share_directory('turn_on_wheeltec_robot'), 'config', 'ekf_carto.yaml')
+
     imu_config = Path(get_package_share_directory('turn_on_wheeltec_robot'), 'config', 'imu.yaml')
 
     
     carto_slam = LaunchConfiguration('carto_slam', default='false')
+    
     carto_slam_dec = DeclareLaunchArgument('carto_slam',default_value='false')
             
     wheeltec_robot = IncludeLaunchDescription(
@@ -31,8 +36,13 @@ def generate_launch_description():
     choose_car = IncludeLaunchDescription(
             PythonLaunchDescriptionSource(os.path.join(launch_dir, 'robot_mode_description.launch.py')),
     )
+        
+    robot_ekf = IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(os.path.join(launch_dir, 'wheeltec_ekf.launch.py')),
+            launch_arguments={'carto_slam':carto_slam}.items(),            
+    )
 
-    
+                                                            
     base_to_link = launch_ros.actions.Node(
             package='tf2_ros', 
             executable='static_transform_publisher', 
@@ -52,14 +62,7 @@ def generate_launch_description():
         parameters=[imu_config]
     )
     
-    robot_ekf = launch_ros.actions.Node(
-            condition=UnlessCondition(carto_slam),
-            package='robot_localization', 
-            executable='ekf_node', 
-            parameters=[ekf_config],
-            remappings=[("odometry/filtered", "odom_combined")]
-            )
-                              
+                           
     joint_state_publisher_node = launch_ros.actions.Node(
             package='joint_state_publisher', 
             executable='joint_state_publisher', 
@@ -68,12 +71,12 @@ def generate_launch_description():
 
     ld = LaunchDescription()
 
+    ld.add_action(choose_car)
     ld.add_action(carto_slam_dec)
     ld.add_action(wheeltec_robot)
     ld.add_action(base_to_link)
     ld.add_action(base_to_gyro)
     ld.add_action(joint_state_publisher_node)
-    ld.add_action(choose_car)
     ld.add_action(imu_filter_node)    
     ld.add_action(robot_ekf)
 

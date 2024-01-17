@@ -17,6 +17,7 @@
     max_range: 200.0                                        #雷达接收距离最大值
     use_gps_ts: false                                       #雷达是否使用GPS授时
     scan_topic: /scan                                       #设置激光数据topic名称
+    pubScan: true                                           #是否发布scan话题
     interface_selection: net                             #接口选择:net 为网口,serial 为串口。
     serial_port_: /dev/wheeltec_laser                              #串口连接时的串口号
 #    pcap: /home/ls/work/2211/M10_P_gps.pcap                 #雷达是否使用pcap包读取功能

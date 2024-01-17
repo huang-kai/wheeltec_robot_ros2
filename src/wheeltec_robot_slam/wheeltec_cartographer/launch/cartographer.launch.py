@@ -63,8 +63,8 @@ def generate_launch_description():
             arguments=[
                 '-configuration_directory', cartographer_config_dir,
                 '-configuration_basename', configuration_basename],
-            remappings=[('odom','odom'),
-            ('imu','/mobile_base/sensors/imu_data')]),
+            remappings=[('odom','/odom_combined'),
+            ('imu','/imu/data')]),
 
         Node(
             package='cartographer_ros',

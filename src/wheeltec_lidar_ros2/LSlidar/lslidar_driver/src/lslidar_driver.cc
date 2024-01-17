@@ -33,10 +33,10 @@
 
 int truncated_mode_=0;          //多角度屏蔽开关：默认为0，如果需要屏蔽多个角度，则truncated_mode_赋值为1。
 
-int scan_crop_min[]={0,180}; 	//雷达屏蔽角度，这里屏蔽角度为135°到225°，
+int scan_crop_min[]={65,210}; 	//雷达屏蔽角度，这里屏蔽角度为135°到225°，
                                 //如果要多角度屏蔽，如10~30，50~60，改为：
                                 //scan_angle_min[]={10，50};scan_angle_max[]={30，60};
-int scan_crop_max[]={90,270};     //修改后编译即可
+int scan_crop_max[]={150,295};     //修改后编译即可
 
 
 namespace lslidar_driver

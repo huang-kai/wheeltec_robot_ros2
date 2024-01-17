@@ -24,6 +24,7 @@ from turn_on_wheeltec_robot.msg import Position as PositionMsg
 from std_msgs.msg import String as StringMsg
 from rclpy.qos import QoSProfile
 from example_interfaces.srv import AddTwoInts
+from std_msgs.msg import Int8 
 
 import rclpy
 from rclpy.node import Node
@@ -34,6 +35,9 @@ class LaserFollower(Node):
 
 	def __init__(self):
 		super().__init__('laserfollower')
+    P=0.0
+    I=0.0
+    D=0.0
 		self.controllerLossTimer = threading.Timer(1, self.controllerLoss) #if we lose connection
 		self.controllerLossTimer.start()
 		self.declare_parameter('P')
@@ -49,6 +53,7 @@ class LaserFollower(Node):
 		self.active=False
 		self.i=0
 		qos = QoSProfile(depth=10)
+		self.laserfwflagPublisher = self.create_publisher(Int8,'/laser_follow_flag',qos)
 		self.cmdVelPublisher = self.create_publisher(Twist, 'cmd_vel', qos)
 		self.positionSubscriber = self.create_subscription(
 		    PositionMsg,
@@ -70,6 +75,11 @@ class LaserFollower(Node):
 	def trackerInfoCallback(self, info):
 		# we do not handle any info from the object tracker specifically at the moment. just ignore that we lost the object for example
 		self.get_logger().warn(info.data)
+	def publish_flag(self):
+		laser_follow_flag=Int8()
+		laser_follow_flag.data=1
+		self.laserfwflagPublisher.publish(laser_follow_flag)
+		self.get_logger().info('laser_follow_flag: {}'.format(laser_follow_flag))
 	def positionUpdateCallback(self, position):
 		angle_x= position.angle_x
 		distance = position.distance
@@ -98,6 +108,9 @@ class LaserFollower(Node):
 			velocity.angular.z = 0.0
 		#self.get_logger().info('linearSpeed: {}, angularSpeed: {}'.format(linearSpeed, angularSpeed))
 		self.cmdVelPublisher.publish(velocity)
+		if self.i < 1:
+			self.i = self.i +1
+			self.publish_flag()
 	def buttonCallback(self, joy_data):
 		# this method gets called whenever we receive a message from the joy stick
 
