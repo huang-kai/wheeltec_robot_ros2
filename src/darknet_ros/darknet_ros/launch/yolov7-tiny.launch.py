@@ -14,17 +14,17 @@ def generate_launch_description():
       launch_arguments={'network_param_file': network_param_file}.items()
   )
 
-  # camera = Node(
-  #   package="v4l2_camera",
-  #   executable="v4l2_camera_node",
-  #   parameters=[
-  #     {'video_device'     : "/dev/video0"},
-  #   ])
-  bringup_dir = get_package_share_directory('turn_on_wheeltec_robot')
-  launch_dir = os.path.join(bringup_dir, 'launch')
-  camera = IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(os.path.join(launch_dir, 'wheeltec_camera.launch.py')),
-    )
+  camera = Node(
+    package="v4l2_camera",
+    executable="v4l2_camera_node",
+    parameters=[
+      {'video_device'     : "/dev/aoni_a50"},
+    ])
+  # bringup_dir = get_package_share_directory('turn_on_wheeltec_robot')
+  # launch_dir = os.path.join(bringup_dir, 'launch')
+  # camera = IncludeLaunchDescription(
+  #           PythonLaunchDescriptionSource(os.path.join(launch_dir, 'wheeltec_camera.launch.py')),
+  #   )
 
   return LaunchDescription([
     darknet_ros_launch,

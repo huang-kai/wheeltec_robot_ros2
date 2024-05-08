@@ -35,9 +35,9 @@ class LaserFollower(Node):
 
 	def __init__(self):
 		super().__init__('laserfollower')
-    P=0.0
-    I=0.0
-    D=0.0
+		P=0.0
+		I=0.0
+		D=0.0
 		self.controllerLossTimer = threading.Timer(1, self.controllerLoss) #if we lose connection
 		self.controllerLossTimer.start()
 		self.declare_parameter('P')

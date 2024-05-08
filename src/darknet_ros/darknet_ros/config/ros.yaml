@@ -2,7 +2,8 @@ darknet_ros:
   ros__parameters:
     subscribers:
       camera_reading:
-        topic: /camera/color/image_raw
+        # topic: /camera/color/image_raw
+        topic: /image_raw
         queue_size: 1
     actions:
       camera_reading:
