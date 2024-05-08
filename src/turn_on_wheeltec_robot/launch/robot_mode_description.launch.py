@@ -28,7 +28,7 @@ def generate_static_transform_publisher_node(translation, rotation, parent, chil
 def generate_launch_description():
 
     mini_akm = GroupAction([
-            generate_robot_node('mini_mec_robot.urdf'),
+            generate_robot_node('mini_akm_robot.urdf'),
             generate_static_transform_publisher_node(['0.048', '0', '0.18'], ['0', '0', '0'], 'base_footprint', 'laser'),
             generate_static_transform_publisher_node(['0.048', '0', '0.18'], ['0', '0', '0'], 'base_footprint', 'camera_link'),
     ])
@@ -62,6 +62,6 @@ def generate_launch_description():
 
     # Create the launch description and populate
     ld = LaunchDescription()
-    ld.add_action(mini_mec)
+    ld.add_action(mini_akm)
     return ld
 
