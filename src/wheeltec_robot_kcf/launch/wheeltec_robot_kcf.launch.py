@@ -19,7 +19,9 @@ def generate_launch_description():
     wheeltec_camera,
     Node(
         package='wheeltec_robot_kcf',
-        executable='KCF_Tracker_Node',
+        executable='run_tracker_node',
+        parameters=[{'targetDist_': 0.8}],
+        output='screen',
     )
     
     ])

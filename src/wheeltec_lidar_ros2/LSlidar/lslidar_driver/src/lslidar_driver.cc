@@ -31,12 +31,14 @@
 #include "lslidar_driver/lslidar_driver.h"
 #include <functional>
 
-int truncated_mode_=0;          //多角度屏蔽开关：默认为0，如果需要屏蔽多个角度，则truncated_mode_赋值为1。
+int truncated_mode_;
 
-int scan_crop_min[]={65,210}; 	//雷达屏蔽角度，这里屏蔽角度为135°到225°，
+//int scan_crop_min[]={65,210}; 
+int scan_crop_min[]={0,180}; 	//雷达屏蔽角度，这里屏蔽角度为135°到225°，
                                 //如果要多角度屏蔽，如10~30，50~60，改为：
                                 //scan_angle_min[]={10，50};scan_angle_max[]={30，60};
-int scan_crop_max[]={150,295};     //修改后编译即可
+//int scan_crop_max[]={150,295};     
+int scan_crop_max[]={90,270}; //修改后编译即可
 
 
 namespace lslidar_driver
@@ -95,6 +97,7 @@ namespace lslidar_driver
 		this->declare_parameter<double>("angle_disable_min", 0.0);
 		this->declare_parameter<double>("angle_disable_max", 0.0);
 		this->declare_parameter<std::string>("interface_selection", "net");
+		this->declare_parameter<int>("truncated_mode_", 0);
 
 		this->get_parameter("lidar_name", lidar_name);
 		this->get_parameter("frame_id", frame_id);
@@ -110,6 +113,7 @@ namespace lslidar_driver
 		this->get_parameter("angle_disable_min", angle_disable_min);
 		this->get_parameter("angle_disable_max", angle_disable_max);
 		this->get_parameter("interface_selection", interface_selection);
+		this->get_parameter("truncated_mode_", truncated_mode_);
 		while (angle_disable_min < 0)
 			angle_disable_min += 360;
 		while (angle_disable_max < 0)
@@ -1187,7 +1191,7 @@ namespace lslidar_driver
 						}
 						scan->intensities[point_idx] = points[i].intensity;
 						
-					if(truncated_mode_){
+						if(truncated_mode_){
 						int len=sizeof(scan_crop_max) / sizeof(scan_crop_max[0]) ;
 						for(int j=0;j<len;++j){
 							if((point_idx>=(scan_crop_min[j]*count_num / 360)) && (point_idx<=(scan_crop_max[j]*count_num / 360))){
@@ -1195,7 +1199,7 @@ namespace lslidar_driver
 								scan->intensities[point_idx] = 0;
 								}
 							}
-						}	
+						}
 					}
 					
 

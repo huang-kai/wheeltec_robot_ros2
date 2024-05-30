@@ -11,10 +11,10 @@ import os
 
 def generate_launch_description():
 
-    driver_dir_1 = os.path.join(get_package_share_directory('lslidar_driver_n10p'), 'params', 'lsx10_1.yaml')
-    driver_dir_2 = os.path.join(get_package_share_directory('lslidar_driver_n10p'), 'params', 'lsx10_2.yaml')
+    driver_dir_1 = os.path.join(get_package_share_directory('lslidar_driver'), 'params', 'lsx10_1.yaml')
+    driver_dir_2 = os.path.join(get_package_share_directory('lslidar_driver'), 'params', 'lsx10_2.yaml')
                      
-    driver_node_1 = LifecycleNode(package='lslidar_driver_n10p',
+    driver_node_1 = LifecycleNode(package='lslidar_driver',
                                 executable='lslidar_driver_node',
                                 name='lslidar_driver_node',		#设置激光数据topic名称
                                 output='screen',
@@ -23,7 +23,7 @@ def generate_launch_description():
                                 parameters=[driver_dir_1],
                                 )
 
-    driver_node_2 = LifecycleNode(package='lslidar_driver_n10p',
+    driver_node_2 = LifecycleNode(package='lslidar_driver',
                                 executable='lslidar_driver_node',
                                 name='lslidar_driver_node',		#设置激光数据topic名称
                                 output='screen',
@@ -45,6 +45,6 @@ def generate_launch_description():
     return LaunchDescription([
         driver_node_1,
         driver_node_2,
-        rviz_node,
+        # rviz_node,
     ])
 

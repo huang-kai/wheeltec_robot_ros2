@@ -16,7 +16,7 @@ def generate_launch_description():
     Ld14_launch_dir = os.path.join(Ld14_dir, 'launch')
     
     Ld06_dir = get_package_share_directory('ldlidar_stl_ros2')
-    Ld06_launch_dir = os.path.join(Ld14_dir, 'launch')
+    Ld06_launch_dir = os.path.join(Ld06_dir, 'launch')
            
 
     Lsm10_m10_uart = IncludeLaunchDescription(

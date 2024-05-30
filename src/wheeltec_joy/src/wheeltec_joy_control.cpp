@@ -22,8 +22,8 @@ public:
     
    this->declare_parameter<int>("axis_linear", 1);//默认axes[1]接收速度
    this->declare_parameter<int>("axis_angular", 0);   //默认axes[0]接收角度
-   this->declare_parameter<double>("vlinear", 0.3); //默认线速度0.3 m/s  
-   this->declare_parameter<double>("vangular", 1);// 默认角速度1 单位rad/s
+   this->declare_parameter<double>("v_linear", 0.3); //默认线速度0.3 m/s  
+   this->declare_parameter<double>("v_angular", 1);// 默认角速度1 单位rad/s
  
    this->get_parameter("axis_linear", axis_linear);
    this->get_parameter("axis_angular", axis_angular);
@@ -85,13 +85,14 @@ private:
 	   v.angular.z = dir*vlinear_z.data*acce_z;
 	   }
 	   //打印输出
-	   //ROS_INFO("linear:%.3lf angular:%.3lf",vlinear_x.data,v.angular.z);
+	   //printf("linear:%.3lf angular:%.3lf",vlinear_x.data,v.angular.z);
 	   pub->publish(v);
 	}
 
 
     //机器人的初始速度
-    double v_linear,v_angular;
+    double v_linear=0.3;
+    double v_angular=0.5;
     //手柄键值
     int axis_angular,axis_linear; 
     int dir,flag_mec;

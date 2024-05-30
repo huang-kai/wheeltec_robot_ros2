@@ -107,12 +107,14 @@ def generate_launch_description():
         'use_respawn', default_value='False',
         description='Whether to respawn if a node crashes. Applied when composition is disabled.')
 
-    wheeltec_robot = IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(os.path.join(wheeltec_launch_dir, 'turn_on_wheeltec_robot.launch.py')),
-    )
     wheeltec_lidar = IncludeLaunchDescription(
             PythonLaunchDescriptionSource(os.path.join(wheeltec_launch_dir, 'wheeltec_lidar.launch.py')),
     )
+
+    wheeltec_robot = IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(os.path.join(wheeltec_launch_dir, 'turn_on_wheeltec_robot.launch.py')),
+    )
+
     # Specify the actions
     bringup_cmd_group = GroupAction([
         PushRosNamespace(
@@ -159,9 +161,8 @@ def generate_launch_description():
 
     # Set environment variables
     ld.add_action(stdout_linebuf_envvar)
-
-    ld.add_action(wheeltec_robot)
     ld.add_action(wheeltec_lidar)
+    ld.add_action(wheeltec_robot)
         
     # Declare the launch options
     ld.add_action(declare_namespace_cmd)

@@ -394,6 +394,8 @@ void turn_on_robot::Control()
   last_time = rclcpp::Node::now();
   while(rclcpp::ok())
   {
+    try
+    {
     current_time = rclcpp::Node::now();
     //Retrieves time interval, which is used to integrate velocity to obtain displacement (mileage) 
     //获取时间间隔，用于积分速度获得位移(里程)
@@ -424,6 +426,11 @@ void turn_on_robot::Control()
     }
 
     last_time = current_time; //Record the time and use it to calculate the time interval //记录时间，用于计算时间间隔
+    }
+    catch (const rclcpp::exceptions::RCLError & e)
+    {
+      RCLCPP_ERROR(this->get_logger(),"unexpectedly failed with %s",e.what());
+    }
 
     }
 }
@@ -460,12 +467,10 @@ turn_on_robot::turn_on_robot()
   this->get_parameter("robot_frame_id", robot_frame_id);
   this->get_parameter("gyro_frame_id", gyro_frame_id);
 
-  odom_publisher = create_publisher<nav_msgs::msg::Odometry>("odom", 10);
-  //odom_timer = create_wall_timer(1s/50, [=]() { Publish_Odom(); });
+  odom_publisher = create_publisher<nav_msgs::msg::Odometry>("odom", 2);
 
-  imu_publisher = create_publisher<sensor_msgs::msg::Imu>("imu/data_raw", 10);    // CHANGE
-  //imu_timer = create_wall_timer(1s/100, [=]() { Publish_ImuSensor(); });
-
+  imu_publisher = create_publisher<sensor_msgs::msg::Imu>("imu/data_raw", 2);    
+ 
   voltage_publisher = create_publisher<std_msgs::msg::Float32>("PowerVoltage", 1);
   //voltage_timer = create_wall_timer(1s/100, [=]() { Publish_Voltage(); });    
   //tf_pub_ = this->create_publisher<tf2_msgs::msg::TFMessage>("tf", 10);

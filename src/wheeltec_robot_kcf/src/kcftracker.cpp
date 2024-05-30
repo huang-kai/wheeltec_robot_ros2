@@ -80,7 +80,7 @@ or tort (including negligence or otherwise) arising in any way out of
 the use of this software, even if advised of the possibility of such damage.
  */
 #include <iostream>
-#include <opencv2/opencv.hpp>
+//#include <opencv2/opencv.hpp>
 #ifndef _KCFTRACKER_HEADERS
 
 #include "kcftracker.h"
@@ -268,6 +268,14 @@ void KCFTracker::train(cv::Mat x, float train_interp_factor) {
     _alphaf = (1 - train_interp_factor) * _alphaf + (train_interp_factor) * alphaf;
 
 
+    /*cv::Mat kf = fftd(gaussianCorrelation(x, x));
+    cv::Mat num = complexMultiplication(kf, _prob);
+    cv::Mat den = complexMultiplication(kf, kf + lambda);
+    _tmpl = (1 - train_interp_factor) * _tmpl + (train_interp_factor) * x;
+    _num = (1 - train_interp_factor) * _num + (train_interp_factor) * num;
+    _den = (1 - train_interp_factor) * _den + (train_interp_factor) * den;
+    _alphaf = complexDivision(_num, _den);*/
+
 }
 
 // Evaluates a Gaussian kernel with bandwidth SIGMA for all relative shifts between input images X and Y, which must both be MxN. They must    also be periodic (ie., pre-processed with a cosine window).
@@ -401,7 +409,7 @@ cv::Mat KCFTracker::getFeatures(const cv::Mat &image, bool inithann, float scale
                               map->map);  // Procedure do deal with cv::Mat multichannel bug
         FeaturesMap = FeaturesMap.t();
         freeFeatureMapObject(&map);
-        cv::waitKey(0);
+        //cv::waitKey(0);
 
         // Lab features
         if (_labfeatures) {

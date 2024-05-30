@@ -18,9 +18,20 @@ def generate_launch_description():
                     {'free_thresh_default': 0.196}]
 
         )
+    map_backup = launch_ros.actions.Node(
+        package='nav2_map_server',
+        executable='map_saver_cli',
+        name='map_backup',
+        output='screen',
+        arguments=['-f', '/home/jetson/dev/wheeltec_robot_ros2/src/wheeltec_robot_nav2/map/WHEELTEC'],
+        
+        parameters=[{'save_map_timeout': 20000.0},
+                    {'free_thresh_default': 0.196}]
+
+        )
     ld = LaunchDescription()
 
     ld.add_action(map_saver)
-
+    ld.add_action(map_backup)
     return ld
  

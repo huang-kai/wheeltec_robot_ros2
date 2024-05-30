@@ -36,10 +36,10 @@ the use of this software, even if advised of the possibility of such damage.
 #pragma once
 
 //#include <cv.h>
-#include <opencv2/opencv.hpp>
-#include "opencv2/imgproc/imgproc.hpp"
-#include "opencv2/highgui/highgui.hpp"
-#include <opencv2/core/core.hpp>
+//#include <opencv2/opencv.hpp>
+//#include "opencv2/imgproc/imgproc.hpp"
+//#include "opencv2/highgui/highgui.hpp"
+//#include <opencv2/core/core.hpp>
 
 #ifndef _OPENCV_FFTTOOLS_HPP_
 #define _OPENCV_FFTTOOLS_HPP_

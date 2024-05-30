@@ -14,7 +14,7 @@ bool bRenewROI = false;
 bool bBeginKCF = false;
 Mat rgbimage;
 Mat depthimage;
-const int &ACTION_ESC = 27;
+//const int &ACTION_ESC = 27;
 
 
 void onMouse(int event, int x, int y, int, void *) {
@@ -68,7 +68,7 @@ void ImageConverter::Cancel() {
 
 void ImageConverter::PIDcallback() {
 
-    this->minDist=1.0;
+    this->targetDist=1.0;
     this->linear_PID->Set_PID(3.0, 0.0, 1.0);
     this->angular_PID->Set_PID(0.5, 0.0, 2.0);
     this->linear_PID->reset();
@@ -119,12 +119,11 @@ void ImageConverter::imageCb(const std::shared_ptr<sensor_msgs::msg::Image> msg)
     image_pub_-> publish(kcf_imagemsg);
     imshow(RGB_WINDOW, rgbimage);
     int action = waitKey(1) & 0xFF;
-    if (action == 'q' || action == ACTION_ESC) this->Cancel();
-    else if (action == 'r')  this->Reset();
+    if (action == 'q' ) this->Cancel();
 }
 
 void ImageConverter::depthCb(const std::shared_ptr<sensor_msgs::msg::Image> msg) {
-	this->get_parameter<float>("minDist_",this->minDist);
+	this->get_parameter<float>("targetDist_",this->targetDist);
     cv_bridge::CvImagePtr cv_ptr;
     try {
         cv_ptr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::TYPE_32FC1);
@@ -150,11 +149,11 @@ void ImageConverter::depthCb(const std::shared_ptr<sensor_msgs::msg::Image> msg)
             else num_depth_points--;
         }
         distance /= num_depth_points;
-        std::cout<<distance<<std::endl;
+        std::cout<<"current_dist(m): "<<distance<<std::endl;
         if (num_depth_points != 0) {
-        	std::cout<<"minDist: "<<minDist<<std::endl;
-            if (abs(distance - this->minDist) < 0.1) linear_speed = 0;
-            else linear_speed = -linear_PID->compute(this->minDist, distance);//-linear_PID->compute(minDist, distance)
+        	std::cout<<"targetDist(m): "<<targetDist<<std::endl;
+            if (abs(distance - this->targetDist) < 0.1) linear_speed = 0;
+            else linear_speed = -linear_PID->compute(this->targetDist, distance);
         }
         rotation_speed = angular_PID->compute(320 / 100.0, center_x / 100.0);//angular_PID->compute(320 / 100.0, center_x / 100.0)
         if (abs(rotation_speed) < 0.1)rotation_speed = 0;
@@ -176,7 +175,7 @@ void ImageConverter::depthCb(const std::shared_ptr<sensor_msgs::msg::Image> msg)
 int main(int argc,char **argv)
 {
     rclcpp::init(argc, argv);
-    std::cout<<"start"<<std::endl;
+    std::cout<<"wheeltec_robot kcf_tracker start"<<std::endl;
     rclcpp::spin(std::make_shared<ImageConverter>());
     return 0;
 }

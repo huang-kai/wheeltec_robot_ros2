@@ -26,8 +26,11 @@ ros2 launch simple_follower_ros2 line_follower.launch.py
 ③ 视觉跟踪
 ros2 launch simple_follower_ros2 visual_follower.launch.py
 
-④ KCF跟随(使用鼠标左键在弹出的窗口中框中所要跟踪的物品，形成矩形框后松开左键开始跟踪。按R键刷新。PS：树莓派使用会有些卡顿）
+④KCF跟随
+step1:
 ros2 launch wheeltec_robot_kcf wheeltec_robot_kcf.launch.py
+step2:
+ros2 launch turn_on_wheeltec_robot turn_on_wheeltec_robot.launch.py
 
 7、2D建图
 ①使用gmapping建图
@@ -48,6 +51,11 @@ ros2 launch wheeltec_nav2 wheeltec_nav2.launch.py
 10、RTAB-MAP建图
 ros2 launch wheeltec_robot_rtab wheeltec_slam_rtab.launch.py
 
+11、语音功能
+step1：打开小车底层节点
+ros2 launch wheeltec_mic_ros2 base.launch.py
+step2：初始化M2麦克风阵列
+ros2 launch wheeltec_mic_ros2 mic_init.launch.py
 
 12、WEB浏览器显示摄像头
 step1：打开相机
@@ -69,5 +77,4 @@ colcon build --packages-select turn_on_wheeltec_robot
 编译全部功能包
 colcon build
 注意：用户修改launch文件内容后需要编译才能生效。
-
-镜像更新日期：2023.09.22
+2024.03

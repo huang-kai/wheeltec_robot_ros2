@@ -10,8 +10,8 @@ def generate_launch_description():
 
     axis_linear = LaunchConfiguration('axis_linear', default='1')
     axis_angular = LaunchConfiguration('axis_angular', default='0')  
-    vlinear = LaunchConfiguration('vlinear', default='0.3')
-    vangular = LaunchConfiguration('vangular', default='0.5')  
+    v_linear = LaunchConfiguration('v_linear', default='0.3')
+    v_angular = LaunchConfiguration('v_angular', default='0.5')  
     
     bringup_dir = get_package_share_directory('turn_on_wheeltec_robot')
     launch_dir = os.path.join(bringup_dir, 'launch')
@@ -33,8 +33,8 @@ def generate_launch_description():
             name='wheeltec_joy',  
             parameters=[{'axis_linear': axis_linear, 
                          'axis_angular': axis_angular, 
-                         'vlinear': vlinear,
-                         'vangular': vangular}],
+                         'v_linear': v_linear,
+                         'v_angular': v_angular}],
             output="screen",)
 
   ])

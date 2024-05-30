@@ -16,11 +16,11 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 # find dependencies
-find_package(OpenCV 4 QUIET)
-if(NOT OpenCV_FOUND)
-  find_package(OpenCV REQUIRED)
-endif()
-message(STATUS "Found OpenCV version ${OpenCV_VERSION}")
+#find_package(OpenCV 4 QUIET)
+#if(NOT OpenCV_FOUND)
+#  find_package(OpenCV REQUIRED)
+#endif()
+#message(STATUS "Found OpenCV version ${OpenCV_VERSION}")
 
 
 find_package(ament_cmake REQUIRED)
@@ -28,6 +28,7 @@ find_package(geometry_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(OpenCV REQUIRED )
 find_package(cv_bridge REQUIRED )
 find_package(image_transport REQUIRED)
 
@@ -37,7 +38,7 @@ find_package(image_transport REQUIRED)
 # find_package(<dependency> REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
 link_directories(${OpenCV_LIBRARY_DIRS})
-include_directories(include/wheeltec_robot_kcf)
+include_directories(include/${PROJECT_NAME})
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   # the following line skips the linter which checks for copyrights
@@ -49,7 +50,9 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
-add_executable( run_tracker_node src/run_tracker.cpp src/kcftracker.cpp src/fhog.cpp src/PID.cpp)
+
+
+add_executable( run_tracker_node  src/run_tracker.cpp src/kcftracker.cpp src/fhog.cpp src/PID.cpp)
 
 ament_target_dependencies(run_tracker_node  OpenCV rclcpp sensor_msgs geometry_msgs std_msgs cv_bridge image_transport)
 

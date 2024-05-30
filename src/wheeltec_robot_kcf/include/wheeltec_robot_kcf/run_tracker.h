@@ -31,7 +31,7 @@ class ImageConverter :public rclcpp::Node{
     rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr vel_pub_;
     rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr image_sub_;
     rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr depth_sub_;
-
+    rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr Joy_sub_;
     
 public:
     ImageConverter():Node("image_converter")
@@ -42,7 +42,7 @@ public:
     float angular_KP=0.5;
     float angular_KI=0.0;
     float angular_KD=2.0;
-    float minDist = 1.0;
+    float targetDist = 1.0;
     bool refresh = false;
         
     this->declare_parameter<float>("linear_KP_",3.0);
@@ -51,7 +51,7 @@ public:
     this->declare_parameter<float>("angular_KP_",0.5);
     this->declare_parameter<float>("angular_KI_",0.0);
     this->declare_parameter<float>("angular_KD_",2.0);
-    this->declare_parameter<float>("minDist_",1.0);
+    this->declare_parameter<float>("targetDist_",1.0);
     this->declare_parameter<bool>("refresh_",false);
      
         
@@ -61,25 +61,26 @@ public:
     this->get_parameter<float>("angular_KP_",angular_KP);
     this->get_parameter<float>("angular_KI_",angular_KI);
     this->get_parameter<float>("angular_KD_",angular_KD);
-    this->get_parameter<float>("minDist_",minDist);
+    this->get_parameter<float>("targetDist_",targetDist);
     this->get_parameter<bool>("refresh_",refresh);
 
         
     this->linear_PID = new PID(linear_KP, linear_KI, linear_KD);
     this->angular_PID = new PID(angular_KP, angular_KI, angular_KD);
+        //sub
         image_sub_=this->create_subscription<sensor_msgs::msg::Image>("/camera/color/image_raw",1,std::bind(&ImageConverter::imageCb,this,_1));
         depth_sub_=this->create_subscription<sensor_msgs::msg::Image>("/camera/depth/image_raw",1,std::bind(&ImageConverter::depthCb,this,_1));
-
+        //pub
         image_pub_=this->create_publisher<sensor_msgs::msg::Image>("/KCF_image",1);
         vel_pub_ =this->create_publisher<geometry_msgs::msg::Twist>("/cmd_vel",1);
     }
-
+    //ros::Publisher pub;
     PID *linear_PID;
     PID *angular_PID;
 
     const char *RGB_WINDOW = "rgb_img";
     const char *DEPTH_WINDOW = "depth_img";
-    float minDist = 1.0;
+    float targetDist = 1.0;
     float linear_speed = 0;
     float rotation_speed = 0;
     bool enable_get_depth = false;
@@ -101,9 +102,8 @@ public:
 
     void depthCb(const std::shared_ptr<sensor_msgs::msg::Image> msg) ;
 
-    void JoyCb(const std::shared_ptr<std_msgs::msg::Bool> msg) ;
 
 };
 
 
-#endif //TRANSBOT_ASTRA_RUN_TRACKER_H
+#endif //TRANSBOT_ASTRA_KCF_TRACKER_H
