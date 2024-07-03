@@ -76,6 +76,7 @@ public:
   void clearUpdateFlag(void);
   void UDP_order(const std_msgs::msg::Int8 msg);
   void UDP_difop();
+  void UDP_M10();
 protected:
   rclcpp::Node*  private_nh_;
   uint16_t port_;
@@ -114,7 +115,7 @@ class InputPCAP : public Input
 {
 public:
     InputPCAP(rclcpp::Node* private_nh,uint16_t port = MSOP_DATA_PORT_NUMBER, double packet_rate = 0.0,
-            std::string filename="");
+            std::string filename="",bool read_once_ = false,bool read_fast_ = false,double repeat_delay_ = 0.0);
     virtual ~InputPCAP();
     virtual int getPacket(lslidar_msgs::msg::LslidarPacket::UniquePtr &pkt);
 private:

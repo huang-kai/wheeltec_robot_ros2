@@ -146,7 +146,12 @@ private:
     rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr point_cloud_pub;
 	rclcpp::Subscription<std_msgs::msg::Int8>::SharedPtr difop_switch;
     LSIOSR * serial_;
+    
+    double packet_timestamp;
+    double last_packet_timestamp;
 };
+typedef LslidarDriver::LslidarDriverPtr LslidarDriverPtr;
+typedef LslidarDriver::LslidarDriverConstPtr LslidarDriverConstPtr;
 typedef PointXYZIT VPoint;
 typedef pcl::PointCloud<VPoint> VPointCloud;
 

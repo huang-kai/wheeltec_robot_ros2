@@ -126,6 +126,27 @@ namespace lslidar_driver
         }
         return; 
     }
+    void Input::UDP_M10()
+	{
+		sockaddr_in server_sai;
+		server_sai.sin_family = AF_INET; // IPV4 协议族
+		server_sai.sin_port = htons(UDP_PORT_NUMBER_DIFOP);
+		server_sai.sin_addr.s_addr = inet_addr(devip_str_.c_str());
+		for (int k = 0; k < 10; k++)
+		{
+			unsigned char data[188]= {0x00};
+			data[0] = 0xA5;
+			data[1] = 0x5A;
+			data[2] = 0x55;
+			data[184] = 0x01;
+			data[185] = 0x01;
+			data[186] = 0xFA;
+			data[187] = 0xFB;
+			int rtn = sendto(sockfd_, data, 188, 0, (struct sockaddr *)&server_sai, sizeof(struct sockaddr));
+			if (rtn > 0) return; 
+		}
+		return; 
+	}
     
     void Input::UDP_order(const std_msgs::msg::Int8 msg)
     {
@@ -143,7 +164,7 @@ namespace lslidar_driver
             data[2] = 0x55;
             data[186] = 0xFA;
             data[187] = 0xFB;  
-            if(lidar_name == "M10" || lidar_name == "M10_GPS" || lidar_name == "M10_P"){
+            if(lidar_name == "M10" || lidar_name == "M10_GPS" || lidar_name == "M10_P" || lidar_name == "M10_DOUBLE" ){
                 if (i <= 1){				    //雷达启停
                     data[184] = 0x01;
                     data[185] = char(i);
@@ -162,7 +183,11 @@ namespace lslidar_driver
                     data[181] = 0x0C;
                     data[184] = 0x06;
                     data[185] = 0x01;
-                }    
+                }
+                else if (i == 30){				//雷达停转并停止发数据
+					data[184] = 0x03;
+					data[185] = 0x00;
+				}    
                 else if (i == 100){				//接收设备包
                     data[184] = 0x08;
                     data[185] = 0x01;
@@ -308,15 +333,16 @@ namespace lslidar_driver
 
         return q;
     }
-    InputPCAP::InputPCAP(rclcpp::Node *private_nh, uint16_t port, double packet_rate, std::string filename) : Input(private_nh, port),
+    InputPCAP::InputPCAP(rclcpp::Node *private_nh, uint16_t port, double packet_rate, std::string filename,
+                         bool read_once_, bool read_fast_, double repeat_delay_) : Input(private_nh, port),
                                                                                 packet_rate_(packet_rate),
                                                                                 filename_(filename)
     {
         pcap_ = NULL;
         empty_ = true;
-        read_once_ = false;
-        read_fast_ = false;
-        repeat_delay_ = 0.0;
+        // read_once_ = false;
+        // read_fast_ = false;
+        // repeat_delay_ = 0.0;
         private_nh->get_parameter("read_once", read_once_);
         private_nh->get_parameter("read_fast", read_fast_);
         private_nh->get_parameter("repeat_delay", repeat_delay_);

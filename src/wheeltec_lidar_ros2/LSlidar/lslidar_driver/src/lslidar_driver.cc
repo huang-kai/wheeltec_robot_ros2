@@ -326,6 +326,11 @@ namespace lslidar_driver
 						if (is_start)
 							data[185] = 0x01;
 					}
+					else if (i == 30) // 雷达停转并停止发数据
+					{
+						data[184] = 0x03;
+						data[185] = 0x00;
+					}
 					else if (i == 100)
 					{ // 接收设备包
 						data[184] = 0x08;
@@ -373,7 +378,7 @@ namespace lslidar_driver
 						data[141] = 0x04;
 						data[142] = 0xb0;
 					}
-					else if (i <= 1)
+					else if (i <= 1)   // 控制雷达启停
 					{
 						data[184] = 0x01;
 						data[185] = char(i);
@@ -403,8 +408,9 @@ namespace lslidar_driver
 						return;
 				}
 				rtn = serial_->send((const char *)data, 188);
-				if (rtn < 0)
+				if (rtn < 0) {
 					printf("start scan error !\n");
+				}
 				else
 				{
 					if (i == 1)
@@ -530,6 +536,26 @@ namespace lslidar_driver
 				}
 			}
 		}
+		if (lidar_name == "M10"){
+			if (interface_selection == "net")
+				msop_input_->UDP_M10();
+			else
+			{
+				for (int k = 0; k < 10; k++)
+				{
+					unsigned char data[188] = {0x00};
+					data[0] = 0xA5;
+					data[1] = 0x5A;
+					data[2] = 0x55;
+					data[184] = 0x01;
+					data[185] = 0x01;
+					data[186] = 0xFA;
+					data[187] = 0xFB;
+					int rtn = serial_->send((const char *)data, 188);
+					if (rtn > 0) break;
+				}
+			}
+		}
 		RCLCPP_INFO(this->get_logger(), "Initialised lslidar without error");
 		return true;
 	}
@@ -548,7 +574,7 @@ namespace lslidar_driver
 			if (ret < 0)
 			{
 				RCLCPP_ERROR(this->get_logger(), "serial open fail");
-				usleep(200000);
+				usleep(1000000);
 			}
 			link_time = 0;
 		}
@@ -721,13 +747,16 @@ namespace lslidar_driver
 			sub_second = (packet_bytes[PACKET_SIZE - 6] * 256 + packet_bytes[PACKET_SIZE - 5]) * 1000000 + (packet_bytes[PACKET_SIZE - 4] * 256 + packet_bytes[PACKET_SIZE - 3]) * 1000;
 			sweep_end_time_gps = get_gps_stamp(pTime);
 			sweep_end_time_hardware = sub_second % 1000000000;
+			
+			packet_timestamp = sweep_end_time_gps + sub_second * 1e-9;
 		}
 		invalidValue = package_points - invalidValue;
 		if (lidar_name == "N10" || lidar_name == "L10")
 			invalidValue--;
 		if (invalidValue <= 1)
 		{
-			delete packet_bytes;
+			// delete packet_bytes;
+			RCLCPP_WARN(this->get_logger(), "Valid point is %d",invalidValue);
 			return;
 		}
 
@@ -786,7 +815,7 @@ namespace lslidar_driver
 				{
 					scan_points_[k].range = 0;
 					scan_points_[k].degree = 0;
-					scan_points_[k].intensity = 0;
+					// scan_points_[k].intensity = 0;
 				}
 				pre_time_ = time_;
 				lock.unlock();
@@ -799,12 +828,12 @@ namespace lslidar_driver
 				idx++;
 			}
 		}
-		packet_bytes = {0x00};
-		if (packet_bytes)
-		{
-			packet_bytes = NULL;
-			delete packet_bytes;
-		}
+		// packet_bytes = {0x00};
+		// if (packet_bytes)
+		// {
+		// 	packet_bytes = NULL;
+		// 	delete packet_bytes;
+		// }
 	}
 
 	void LslidarDriver::data_processing_2(unsigned char *packet_bytes, int len) // 处理每一包的数据
@@ -854,7 +883,7 @@ namespace lslidar_driver
 				invalidValue++;
 		}
 
-		if (use_gps_ts)
+		if (use_gps_ts && lidar_name == "M10_DOUBLE")
 		{
 			pTime.tm_year = packet_bytes[PACKET_SIZE - 12] + 2000 - 1900; // x+2000
 			pTime.tm_mon = packet_bytes[PACKET_SIZE - 11] - 1;			  // 1-12
@@ -865,13 +894,16 @@ namespace lslidar_driver
 			sub_second = (packet_bytes[PACKET_SIZE - 6] * 256 + packet_bytes[PACKET_SIZE - 5]) * 1000000 + (packet_bytes[PACKET_SIZE - 4] * 256 + packet_bytes[PACKET_SIZE - 3]) * 1000;
 			sweep_end_time_gps = get_gps_stamp(pTime);
 			sweep_end_time_hardware = sub_second % 1000000000;
+
+			packet_timestamp = sweep_end_time_gps + sub_second * 1e-9;
 		}
 		invalidValue = package_points - invalidValue;
 		if (lidar_name == "N10_P")
 			invalidValue--;
 		if (invalidValue <= 1)
 		{
-			delete packet_bytes;
+			// delete packet_bytes;
+			RCLCPP_WARN(this->get_logger(), "Valid point is %d",invalidValue);
 			return;
 		}
 
@@ -943,7 +975,7 @@ namespace lslidar_driver
 				{
 					scan_points_[k].range = 0;
 					scan_points_[k].degree = 0;
-					scan_points_[k].intensity = 0;
+					//scan_points_[k].intensity = 0;
 				}
 				pre_time_ = time_;
 				lock.unlock();
@@ -956,15 +988,15 @@ namespace lslidar_driver
 				idx++;
 			}
 		}
-		packet_bytes = {0x00};
-		if (packet_bytes)
-		{
-			packet_bytes = NULL;
-			delete packet_bytes;
-		}
+		// packet_bytes = {0x00};
+		// if (packet_bytes)
+		// {
+		// 	packet_bytes = NULL;
+		// 	delete packet_bytes;
+		// }
 	}
 
-	void LslidarDriver::pubScanThread()
+	void LslidarDriver::pubScanThread() // 发布scan或者pointcloud2话题
 	{
 		bool wait_for_wake = true;
 		boost::unique_lock<boost::mutex> lock(pubscan_mutex_);
@@ -1268,8 +1300,10 @@ namespace lslidar_driver
 
 	bool LslidarDriver::polling()
 	{
-		if (!is_start)
+		if (!is_start) {
+		    usleep(1000);
 			return true;
+		}
 		// Allocate a new shared pointer for zero-copy sharing with other nodelets.
 		unsigned char *packet_bytes = new unsigned char[500];
 		int len = 0;
@@ -1378,6 +1412,7 @@ namespace lslidar_driver
 							int len_L = packet_bytes[3];
 							len = len_H * 256 + len_L;
 						}
+						if (len >= 300 ) continue;
 						if (lidar_name == "N10_P" || lidar_name == "M10_DOUBLE")
 							LslidarDriver::data_processing_2(packet_bytes, len);
 						else
@@ -1415,6 +1450,7 @@ namespace lslidar_driver
 				LslidarDriver::data_processing(packet_bytes, len);
 		}
 		delete packet_bytes;
+		packet_bytes = NULL;
 		return true;
 	}
 
