@@ -29,6 +29,7 @@ def generate_launch_description():
     parameters=[{
           'queue_size':20,
           'frame_id':'camera_link',
+          'subscribe_odom_info':True,
           'use_sim_time':use_sim_time,
           'subscribe_scan':True,
           'subscribe_depth':True}]
@@ -51,6 +52,11 @@ def generate_launch_description():
             description='Use simulation (Gazebo) clock if true'),
 
         # Nodes to launch
+        Node(
+            package='rtabmap_odom', executable='rgbd_odometry', output='screen',
+            parameters=parameters,
+            remappings=remappings),
+            
         Node(
             package='rtabmap_slam', executable='rtabmap', output='screen',
             parameters=parameters,
