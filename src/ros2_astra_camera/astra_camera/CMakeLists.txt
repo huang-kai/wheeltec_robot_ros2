@@ -38,8 +38,6 @@ find_package(tf2_eigen REQUIRED)
 find_package(tf2_msgs REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(tf2_sensor_msgs REQUIRED)
-set(libuvc_INCLUDE_DIRS "/usr/local/include/libuvc")
-set(libuvc_LIBRARIES "/usr/local/lib/libuvc.so")
 
 execute_process(COMMAND uname -m OUTPUT_VARIABLE MACHINES)
 execute_process(COMMAND getconf LONG_BIT OUTPUT_VARIABLE MACHINES_BIT)
@@ -113,8 +111,7 @@ target_link_libraries(${PROJECT_NAME}
   Eigen3::Eigen
   glog::glog
   magic_enum::magic_enum
-  #LibUVC::UVCShared
-  ${libuvc_LIBRARIES}
+  LibUVC::UVCShared
   -lOpenNI2
   -L${ORBBEC_OPENNI2_REDIST}
   )
@@ -137,8 +134,7 @@ target_link_libraries(list_devices_node
   Eigen3::Eigen
   glog::glog
   magic_enum::magic_enum
-  #LibUVC::UVCShared
-  ${libuvc_LIBRARIES}
+  LibUVC::UVCShared
   -lOpenNI2
   -L${ORBBEC_OPENNI2_REDIST}
   ${PROJECT_NAME}

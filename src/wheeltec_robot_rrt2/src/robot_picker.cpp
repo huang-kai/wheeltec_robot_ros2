@@ -6,7 +6,7 @@
 
 #include "rclcpp/rclcpp.hpp"
 #include "nav2_behavior_tree/behavior_tree_engine.hpp"
-#include "behaviortree_cpp_v3/utils/shared_library.h"
+#include "behaviortree_cpp/utils/shared_library.h"
 std::chrono::milliseconds bt_loop_duration_;
 int main(int argc, char **argv)
 {
@@ -29,7 +29,7 @@ int main(int argc, char **argv)
       "approach_coloured_box",
       "pick_coloured_box"};
 
-  bt_ = std::make_unique<nav2_behavior_tree::BehaviorTreeEngine>(plugin_libs);
+  bt_ = std::make_unique<nav2_behavior_tree::BehaviorTreeEngine>(plugin_libs, node);
 
   blackboard_ = BT::Blackboard::create();
   blackboard_->set<std::string>("box_colour", "red_box");
@@ -60,7 +60,7 @@ int main(int argc, char **argv)
   nav2_behavior_tree::BtStatus rc;
   do{
    rc = bt_->run(&tree_, on_loop, is_canceling, bt_loop_duration_);
-    bt_->haltAllActions(tree_.rootNode());
+    bt_->haltAllActions(tree_);
 
   }while(rc == nav2_behavior_tree::BtStatus::SUCCEEDED);
 

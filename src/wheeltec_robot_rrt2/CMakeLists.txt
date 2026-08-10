@@ -32,7 +32,7 @@ find_package(laser_geometry REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(OpenCV 4.2.0 REQUIRED)
 find_package(cv_bridge REQUIRED)
-find_package(behaviortree_cpp_v3 REQUIRED)
+find_package(behaviortree_cpp REQUIRED)
 find_package(nav2_behavior_tree REQUIRED)
 find_package(nav2_util REQUIRED)
 
@@ -46,7 +46,7 @@ add_library(pick_coloured_box SHARED src/bt_plugins/pick_coloured_box.cpp)
 list(APPEND plugin_libs pick_coloured_box)
 
 foreach(bt_plugin ${plugin_libs})
-  ament_target_dependencies(${bt_plugin} behaviortree_cpp_v3 nav2_msgs nav2_behavior_tree wheeltec_rrt_msg)
+  ament_target_dependencies(${bt_plugin} behaviortree_cpp nav2_msgs nav2_behavior_tree wheeltec_rrt_msg)
   target_compile_definitions(${bt_plugin} PRIVATE BT_PLUGIN_EXPORT)
 endforeach()
 

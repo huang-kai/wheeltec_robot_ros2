@@ -1,7 +1,7 @@
 #include <iostream>
 #include "run_tracker.h"
 #include <rclcpp/rclcpp.hpp>
-#include <cv_bridge/cv_bridge.h>
+#include <cv_bridge/cv_bridge.hpp>
 #include "kcftracker.h"
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>

@@ -27,13 +27,13 @@
 #include "std_msgs/msg/header.hpp"
 #include "sensor_msgs/msg/image.hpp"
 #include "geometry_msgs/msg/point.hpp"
-#include "image_transport/image_transport.h"
+#include "image_transport/image_transport.hpp"
 
 // OpenCv
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/objdetect/objdetect.hpp>
-#include <cv_bridge/cv_bridge.h>
+#include <cv_bridge/cv_bridge.hpp>
 
 // darknet_ros_msgs
 #include "darknet_ros_msgs/msg/bounding_boxes.hpp"
